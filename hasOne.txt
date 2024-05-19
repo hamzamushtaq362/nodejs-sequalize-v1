@@ -1,0 +1,53 @@
+const { Sequelize, DataTypes } = require("sequelize");
+const doesTableExist = require("../utils");
+
+// Create a new Sequelize instance
+const sequelize = new Sequelize(
+  process.env.DATABASE,
+  process.env.USER_NAME,
+  process.env.PASSWORD,
+  {
+    host: process.env.HOST,
+    dialect: "mysql",
+  }
+);
+
+// Define the User model
+const Country = sequelize.define(
+  "country",
+  {
+    countryName: {
+      type: DataTypes.STRING,
+      unique: true,
+    },
+  },
+  {
+    timestamps: false,
+  }
+);
+
+const Capital = sequelize.define(
+  "capital",
+  {
+    capitalName: {
+      type: DataTypes.STRING,
+      unique: true,
+    },
+  },
+  {
+    timestamps: false,
+  }
+);
+
+Country.hasOne(Capital);
+
+// Create the User table in the database (if it doesn't exist)
+
+sequelize.sync({alter: true}).then(() => {
+    console.log('table created');
+});
+
+module.exports = {
+  Country,
+  Capital
+};
